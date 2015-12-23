@@ -51,7 +51,7 @@ interval_ind = 0 # Interval index: runs from 0 to N-1
 for right_margin in xrange(0, 256): # [0..255]
     tmp_sum += hist[right_margin]
     
-    # 0.9 is a coefficient
+    # 0.9 is a coefficient to make integrals more 'equal'
     if tmp_sum >= 0.9*interval_sum and interval_ind != N-1:
         # add margins of a new interval
         intervals[interval_ind, 0] = left_margin
