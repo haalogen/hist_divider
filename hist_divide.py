@@ -1,9 +1,3 @@
-# TODO:
-# Ideas: 
-# 1) Two-side approach, stopping in the center -- in order 
-# to make more approx. equal integrals
-# 2) Recursive 'split-in-halves' algorithm af dividing
-
 """
 This is a script for dividing the histogram of Grayscale image into N intervals ("shades of gray"), by the means of integral sums of the histogram.
 
@@ -22,6 +16,14 @@ from PIL import Image
 img_fname = sys.argv[1] # Image filename
 N = int(sys.argv[2]) # Wanted number of intervals
 
+fatal_msg = """
+N must be less or equal than 128 !!! (or even 100)
+because often there are lots of shades that don't have pixels 
+of that shade on the picture"""
+
+if N > 128:
+    print fatal_msg
+    sys.exit(1)
 # Output: array (of pairs) of shape (N, 2); 
 # each pair: [left_margin, right_margin]
 intervals = np.zeros((N, 2))
@@ -51,14 +53,12 @@ interval_ind = 0 # Interval index: runs from 0 to N-1
 for right_margin in xrange(0, 256): # [0..255]
     tmp_sum += hist[right_margin]
     
-    # 0.9 is a coefficient to make integrals more 'equal'
-    if tmp_sum >= 0.9*interval_sum and interval_ind != N-1:
+    if tmp_sum >= (interval_ind+1) * interval_sum and interval_ind != N-1:
         # add margins of a new interval
         intervals[interval_ind, 0] = left_margin
         intervals[interval_ind, 1] = right_margin
         
         real_sum[interval_ind] = tmp_sum
-        tmp_sum = 0
         interval_ind += 1
         left_margin = right_margin+1
     
@@ -88,7 +88,8 @@ lbl = 'Histogram of image: ' + img_fname + \
 plt.title(lbl)
 
 print 'Ideal sum:', interval_sum
-print 'Real sums of intervals:\n', real_sum
+print 'Full sum:', full_sum
+print 'Real partial sums:\n', real_sum
 print 'Resulting intervals:\n', intervals
 plt.show()
 
