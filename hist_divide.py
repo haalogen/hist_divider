@@ -1,5 +1,7 @@
 """
-This is a script for dividing the histogram of Grayscale image into N intervals ("shades of gray"), by the means of integral sums of the histogram.
+This is a script for dividing the histogram of Grayscale image into N 
+intervals ("shades of gray"), by the means of integral sums of the 
+histogram.
 
 Idea:
 
@@ -40,7 +42,7 @@ hist = img.histogram()
 # Calculate integral sums here
 full_sum = sum(hist) # Full integral sum (of the whole spectrum)
 real_sum = np.zeros(N) # Calculated (real) sums
-interval_sum = full_sum // N # Integral sum of each interval
+interval_sum = full_sum // N # Ideal integral sum of each interval
 
 # interval == [left_margin, right_margin]
 left_margin = 0 
@@ -48,8 +50,9 @@ right_margin = 0
 
 tmp_sum = 0 # Temporary sum
 interval_ind = 0 # Interval index: runs from 0 to N-1
-# Integrate histogram until tmp_sum >= interval_sum
-# Then add new margins; zero tmp_sum
+# Integrate histogram until tmp_sum >= (interval_ind+1)*interval_sum
+# Then add margins of the new interval; 
+# Continue process till the end of spectrum
 for right_margin in xrange(0, 256): # [0..255]
     tmp_sum += hist[right_margin]
     
@@ -80,7 +83,7 @@ plt.plot(colors, hist, 'b') # Plot histogram
 
 x = intervals.ravel() # Flatten intervals to 1D array (as a view)
 xmin, xmax, ymin, ymax = plt.axis() # limits of plot
-plt.vlines(x, ymin, ymax, colors='r') # Plot margins
+plt.vlines(x, ymin, ymax, colors='r') # Plot margins of intervals
 
 
 lbl = 'Histogram of image: ' + img_fname + \
